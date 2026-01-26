@@ -1,21 +1,21 @@
 #!/bin/bash
 #
-# Overlord Method - Orchestrator Script
+# Ukko Method - Orchestrator Script
 #
 # Usage:
-#   ./overlord.sh          - Run in mode specified by config (auto or testing)
-#   ./overlord.sh run      - Run a single generation (for testing mode)
-#   ./overlord.sh plan     - Start planning phase
-#   ./overlord.sh status   - Show current progress
+#   ./ukko.sh          - Run in mode specified by config (auto or testing)
+#   ./ukko.sh run      - Run a single generation (for testing mode)
+#   ./ukko.sh plan     - Start planning phase
+#   ./ukko.sh status   - Show current progress
 #
 
 set -e
 
-OVERLORD_DIR=".overlord"
-CONFIG_FILE="$OVERLORD_DIR/config.yaml"
-PRD_FILE="$OVERLORD_DIR/PRD.md"
-CONFLICT_FILE="$OVERLORD_DIR/CONFLICT.md"
-PLANNING_GUIDE="$OVERLORD_DIR/planning/planning-guide.md"
+UKKO_DIR=".ukko"
+CONFIG_FILE="$UKKO_DIR/config.yaml"
+PRD_FILE="$UKKO_DIR/PRD.md"
+CONFLICT_FILE="$UKKO_DIR/CONFLICT.md"
+PLANNING_GUIDE="$UKKO_DIR/planning/planning-guide.md"
 
 # Colors for output
 RED='\033[0;31m'
@@ -61,14 +61,14 @@ all_tasks_complete() {
     fi
 }
 
-# Run a single Overlord generation
+# Run a single Ukko generation
 run_generation() {
-    echo -e "${BLUE}Starting Overlord generation...${NC}"
+    echo -e "${BLUE}Starting Ukko generation...${NC}"
 
     # Check for conflicts first
     if has_conflict; then
         echo -e "${RED}CONFLICT DETECTED${NC}"
-        echo "A previous Overlord flagged an issue that needs human review:"
+        echo "A previous Ukko flagged an issue that needs human review:"
         echo "---"
         cat "$CONFLICT_FILE"
         echo "---"
@@ -78,19 +78,19 @@ run_generation() {
 
     # Run Claude Code
     # The CLAUDE.md file will instruct it to read the appropriate guides
-    claude --print "You are an Overlord. Read CLAUDE.md and proceed with your phase."
+    claude --print "You are Ukko. Read CLAUDE.md and proceed with your phase."
 
     echo -e "${GREEN}Generation complete.${NC}"
 }
 
 # Show status
 show_status() {
-    echo -e "${BLUE}=== Overlord Method Status ===${NC}"
+    echo -e "${BLUE}=== Ukko Method Status ===${NC}"
     echo ""
 
     if is_planning_phase; then
         echo -e "Phase: ${YELLOW}PLANNING${NC}"
-        echo "Run './overlord.sh plan' to start planning."
+        echo "Run './ukko.sh plan' to start planning."
     else
         echo -e "Phase: ${GREEN}EXECUTION${NC}"
         echo -e "Progress: $(get_progress) tasks complete"
@@ -111,9 +111,9 @@ show_status() {
 
 # Main execution
 main() {
-    # Ensure we're in a project with Overlord setup
-    if [ ! -d "$OVERLORD_DIR" ]; then
-        echo -e "${RED}Error: No $OVERLORD_DIR directory found.${NC}"
+    # Ensure we're in a project with Ukko setup
+    if [ ! -d "$UKKO_DIR" ]; then
+        echo -e "${RED}Error: No $UKKO_DIR directory found.${NC}"
         echo "Are you in the right directory?"
         exit 1
     fi
@@ -128,12 +128,12 @@ main() {
                 exit 0
             fi
             echo -e "${BLUE}Starting planning phase...${NC}"
-            claude --print "You are the Planning Overlord. Read CLAUDE.md and begin planning."
+            claude --print "You are the Planning Ukko. Read CLAUDE.md and begin planning."
             ;;
 
         "run")
             if is_planning_phase; then
-                echo -e "${YELLOW}Still in planning phase. Run './overlord.sh plan' first.${NC}"
+                echo -e "${YELLOW}Still in planning phase. Run './ukko.sh plan' first.${NC}"
                 exit 1
             fi
             run_generation
@@ -147,16 +147,16 @@ main() {
             # Default behavior based on mode
             if is_planning_phase; then
                 echo -e "${YELLOW}Planning phase not complete.${NC}"
-                echo "Run './overlord.sh plan' to start planning."
+                echo "Run './ukko.sh plan' to start planning."
                 exit 0
             fi
 
             if [ "$mode" = "testing" ]; then
-                echo -e "${YELLOW}Testing mode: Run './overlord.sh run' for each generation.${NC}"
+                echo -e "${YELLOW}Testing mode: Run './ukko.sh run' for each generation.${NC}"
                 show_status
             else
                 # Auto mode - continuous loop
-                echo -e "${BLUE}=== Overlord Method - Auto Mode ===${NC}"
+                echo -e "${BLUE}=== Ukko Method - Auto Mode ===${NC}"
                 echo "Running continuous generations until complete."
                 echo "Press Ctrl+C to stop at any time."
                 echo ""
@@ -182,7 +182,7 @@ main() {
             ;;
 
         *)
-            echo "Usage: ./overlord.sh [command]"
+            echo "Usage: ./ukko.sh [command]"
             echo ""
             echo "Commands:"
             echo "  plan     Start planning phase"

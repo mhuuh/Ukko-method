@@ -1,17 +1,24 @@
-# Overlord Method
+# Ukko Method
 
-An autonomous coding system that combines iterative task completion (Ralph Loops) with parallel decision-making swarms (Boris Method).
+An autonomous coding system that combines iterative task completion (Ralph Loops) with parallel decision-making swarms.
+
+Named after **Ukko** (Finnish: *Ukko ylijumala*), the supreme god of sky, weather, and thunder in Finnish mythology. Just as Ukko ruled over the other gods from above, the Ukko Method places an AI "overseer" in charge of orchestrating autonomous agents.
 
 ## How It Works
 
 ### The Core Idea
 
-Instead of comparing **finished implementations** (expensive), the Overlord Method compares **approaches and ideas** (cheap) at key decision points.
+The Ukko Method builds on two existing approaches:
+
+- **Ralph Loops**: Autonomous task completion with hard context resets between generations
+- **Boris Method**: Running multiple AI instances in parallel and having a *human* pick the best result
+
+The key insight: Instead of humans comparing **finished implementations** (expensive, slow), we have an AI compare **approaches and ideas** (cheap, fast) at key decision points. This makes the entire system autonomous while maintaining quality through parallel exploration.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                        PLANNING PHASE                           │
-│  User describes goal → Planning Overlord asks questions         │
+│  User describes goal → Planning Ukko asks questions             │
 │  → Swarms for architecture decisions → Creates PRD + Spec       │
 └─────────────────────────────────────────────────────────────────┘
                               ↓
@@ -19,7 +26,7 @@ Instead of comparing **finished implementations** (expensive), the Overlord Meth
 │                       EXECUTION PHASE                           │
 │  ┌──────────────────────────────────────────────────────────┐   │
 │  │                    GENERATION LOOP                        │   │
-│  │  Overlord reads PRD/Spec → Picks next task               │   │
+│  │  Ukko reads PRD/Spec → Picks next task                   │   │
 │  │        ↓                                                  │   │
 │  │  Key decision point?                                      │   │
 │  │        ↓ yes                                              │   │
@@ -28,7 +35,7 @@ Instead of comparing **finished implementations** (expensive), the Overlord Meth
 │  │  [Agent][Agent][Agent]  ← Parallel swarm                  │   │
 │  │  └─────┬─────┘                                            │   │
 │  │        ↓                                                  │   │
-│  │  Overlord picks best approach                             │   │
+│  │  Ukko picks best approach (AI decision, not human)        │   │
 │  │        ↓                                                  │   │
 │  │  Implement → Tick box → Commit → Exit                     │   │
 │  └──────────────────────────────────────────────────────────┘   │
@@ -42,29 +49,30 @@ Instead of comparing **finished implementations** (expensive), the Overlord Meth
 1. **PRD and Spec are READ-ONLY** during execution (except ticking task boxes)
 2. **Hard context reset** between generations (fresh start, no context rot)
 3. **Swarms for decisions, not implementations** (compare ideas, not code)
-4. **No user input during execution** (fully autonomous after planning)
+4. **AI picks the best approach** (fully autonomous - no human in the loop after planning)
 5. **Decision breadcrumbs in-code** (minimal comments where decisions were made)
 
 ## Quick Start
 
 ### 1. Setup
 
-Copy the `.overlord/` directory and files to your project:
+Copy the `.ukko/` directory and files to your project:
 
 ```bash
-cp -r .overlord/ your-project/
+cp -r .ukko/ your-project/
 cp CLAUDE.md your-project/
-cp overlord.sh your-project/
+cp ukko.sh your-project/
+chmod +x your-project/ukko.sh
 ```
 
 ### 2. Planning Phase
 
 ```bash
 cd your-project
-./overlord.sh plan
+./ukko.sh plan
 ```
 
-The Planning Overlord will:
+The Planning Ukko will:
 - Ask clarifying questions about what you want to build
 - Deploy swarms for major architectural decisions
 - Create the PRD (requirements + tasks) and technical spec
@@ -74,30 +82,29 @@ The Planning Overlord will:
 
 ```bash
 # Auto mode (continuous until complete)
-./overlord.sh
+./ukko.sh
 
 # Or testing mode (manual trigger each generation)
-# First set mode: testing in .overlord/config.yaml
-./overlord.sh run
+# First set mode: testing in .ukko/config.yaml
+./ukko.sh run
 ```
 
 ### 4. Monitor Progress
 
 ```bash
-./overlord.sh status
+./ukko.sh status
 ```
 
 ## File Structure
 
 ```
 your-project/
-├── CLAUDE.md                    # Bootstrap - tells Overlord what to read
-├── overlord.sh                  # Orchestrator script
-├── .overlord/
+├── CLAUDE.md                    # Bootstrap + execution instructions
+├── ukko.sh                      # Orchestrator script
+├── .ukko/
 │   ├── config.yaml              # User settings (mode, swarm config)
 │   ├── PRD.md                   # Requirements + task checkboxes
 │   ├── spec.md                  # Technical specification
-│   ├── overlord-guide.md        # Execution phase instructions
 │   └── planning/                # Deleted after planning complete
 │       └── planning-guide.md    # Planning phase instructions
 └── src/                         # Your code (created during execution)
@@ -105,7 +112,7 @@ your-project/
 
 ## Configuration
 
-Edit `.overlord/config.yaml`:
+Edit `.ukko/config.yaml`:
 
 ```yaml
 # Operation mode
@@ -120,7 +127,7 @@ swarm:
 
 ## Decision Triggers
 
-Overlords deploy swarms when facing:
+Ukkos deploy swarms when facing:
 - Architectural approach choices
 - Library/dependency selection
 - Data model design
@@ -130,13 +137,13 @@ Overlords deploy swarms when facing:
 ## Stopping & Conflicts
 
 - **Ctrl+C** stops the loop at any time
-- If an Overlord detects an unresolvable issue, it creates `.overlord/CONFLICT.md` and exits
+- If an Ukko detects an unresolvable issue, it creates `.ukko/CONFLICT.md` and exits
 - The orchestrator pauses for human review when conflicts are detected
 
 ## Credits
 
 Built on:
 - **Ralph Loops** - Persistent iteration with hard context resets
-- **Boris Method** - Parallel instances, pick the best result
+- **Boris Method** - Parallel instances with human selection
 
-The insight: Apply Boris at the **decision layer** instead of the **implementation layer** for massive cost/time savings.
+The Ukko insight: Move selection from human to AI, and apply parallel comparison at the **decision layer** instead of the **implementation layer** for massive cost/time savings while maintaining full autonomy.
