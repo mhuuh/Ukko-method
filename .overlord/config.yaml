@@ -1,0 +1,35 @@
+# Overlord Method Configuration
+# This file is read by the orchestrator, not directly by the Overlord.
+# Values are templated into overlord-guide.md during setup.
+
+# Operation mode
+# - auto: Continuous generation loop (default)
+# - testing: Manual trigger for each generation
+mode: auto
+
+# Model for the Overlord (the decision-maker)
+overlord_model: claude-opus-4-5
+
+# Swarm configuration
+swarm:
+  # Model for swarm agents
+  # - auto: Overlord decides per-swarm based on task complexity [DEFAULT]
+  # - opus: Always use Opus (highest quality, highest cost)
+  # - sonnet: Always use Sonnet (balanced)
+  # - haiku: Always use Haiku (fastest, lowest cost)
+  default_agent_model: auto
+
+  # Number of parallel agents per swarm [DEFAULT: 5]
+  agents_per_swarm: 5
+
+  # Target swarms per task - guidance, not hard limit [DEFAULT: 2-5]
+  target_swarms_per_task: "2-5"
+
+# Decision triggers - when Overlord should consider launching a swarm
+# These are templated into overlord-guide.md
+decision_triggers:
+  - "choosing between architectural approaches"
+  - "selecting libraries or dependencies"
+  - "designing data models or schemas"
+  - "determining API contracts"
+  - "any choice that significantly constrains future implementation"
