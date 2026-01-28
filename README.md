@@ -53,7 +53,7 @@ Instead of humans comparing **finished implementations** (expensive, slow), we h
 
 1. **PRD and Spec are READ-ONLY** during execution (except ticking task boxes)
 2. **Hard context reset** between generations (fresh start, no context rot)
-3. **Swarms for decisions, not implementations** (compare ideas, not code)
+3. **Deploys agents for decisions, not implementations** (compare ideas, not code)
 4. **AI picks the best approach** (fully autonomous - no human in the loop after planning)
 5. **Decision breadcrumbs in-code** (minimal comments where decisions were made)
 
