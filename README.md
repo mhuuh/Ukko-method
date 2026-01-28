@@ -81,7 +81,7 @@ agents_per_swarm: 5 # Number of parallel agents per swarm
 
 If you edit config.yaml, run `python setup.py` to apply your changes to CLAUDE.md.
 
-### Step 2.6: Enable Autonomous Permissions
+### Step 3: Enable Autonomous Permissions
 
 For fully autonomous operation, Claude Code needs permission to run without confirmations:
 
@@ -98,7 +98,7 @@ claude config set --global dangerouslySkipPermissions true
 
 **Alternative:** If you prefer manual approval, skip this step. Claude will pause and ask permission for each action (not practical for auto mode, but fine for testing mode).
 
-### Step 3: Start the Planning Phase
+### Step 4: Start the Planning Phase
 
 Now the fun begins! Run this command:
 
@@ -115,7 +115,7 @@ python ukko.py plan
 
 **This typically takes 5-15 minutes depending on project complexity.**
 
-### Step 4: Run the Execution Phase
+### Step 5: Run the Execution Phase
 
 Once planning is complete, start the build:
 
@@ -135,7 +135,7 @@ python ukko.py
 4. It checks off the task and commits the code
 5. The script spawns the next generation (or waits for you in testing mode)
 
-### Step 5: Monitor Progress
+### Step 6: Monitor Progress
 
 Check how things are going:
 
