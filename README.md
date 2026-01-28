@@ -86,7 +86,7 @@ If you edit config.yaml, run `python setup.py` to apply your changes to CLAUDE.m
 For fully autonomous operation, Claude Code needs permission to run without confirmations:
 
 ```bash
-claude config set --global dangerouslySkipPermissions true
+claude config set dangerouslySkipPermissions true
 ```
 
 **⚠️ Security Warning:**
@@ -135,18 +135,17 @@ python ukko.py
 4. It checks off the task and commits the code
 5. The script spawns the next generation (or waits for you in testing mode)
 
-### Step 6: Monitor Progress
+### Step 6: Watch It Work
 
-Check how things are going:
+Since everything runs in the Claude Code CLI, you can watch Claude work in real-time - seeing swarms launch, decisions being made, and code being written.
+
+For a quick progress check outside of Claude:
 
 ```bash
 python ukko.py status
 ```
 
-You'll see:
-- Current phase (planning or execution)
-- How many tasks are complete
-- Any conflicts that need your attention
+This shows completed tasks, current phase, and any conflicts.
 
 ---
 
