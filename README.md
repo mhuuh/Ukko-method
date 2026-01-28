@@ -70,6 +70,17 @@ cp path/to/Ukko-method/setup.py .
 ls -la
 ```
 
+### Step 2.5: (Optional) Configure Settings
+
+The defaults work fine for most users, but you can customize behavior by editing `.ukko/config.yaml`:
+
+```yaml
+mode: auto          # auto = continuous, testing = one task at a time
+agents_per_swarm: 5 # Number of parallel agents per swarm
+```
+
+If you edit config.yaml, run `python setup.py` to apply your changes to CLAUDE.md.
+
 ### Step 3: Start the Planning Phase
 
 Now the fun begins! Run this command:

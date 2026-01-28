@@ -86,10 +86,16 @@ def all_tasks_complete() -> bool:
 def run_claude(prompt: str) -> int:
     """Run Claude Code with the given prompt"""
     try:
-        result = subprocess.run(
-            ["claude", "--print", prompt],
-            check=False
-        )
+        cmd = ["claude", "--print"]
+
+        # Add model flag if configured
+        ukko_model = get_config("ukko_model")
+        if ukko_model:
+            cmd.extend(["--model", ukko_model])
+
+        cmd.append(prompt)
+
+        result = subprocess.run(cmd, check=False)
         return result.returncode
     except FileNotFoundError:
         print(f"{Colors.RED}Error: 'claude' command not found.{Colors.NC}")
