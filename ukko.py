@@ -99,7 +99,7 @@ def get_latest_commit() -> str:
         return ""
 
 
-def watch_for_completion(process, initial_commit: str, stop_event: threading.Event):
+def watch_for_completion(process, initial_commit: str, stop_event: threading.Event, killed_flag: list):
     """Watch for git commits and terminate Claude when a new commit appears."""
     print(f"{Colors.YELLOW}[Watcher] Started. Initial commit: {initial_commit[:8] if initial_commit else 'none'}{Colors.NC}")
 
@@ -114,6 +114,9 @@ def watch_for_completion(process, initial_commit: str, stop_event: threading.Eve
             time.sleep(8)  # Give Claude time to finish output
 
             print(f"{Colors.GREEN}[Watcher] Terminating session...{Colors.NC}")
+
+            # Mark that we intentionally killed it
+            killed_flag[0] = True
 
             # Force kill the process
             process.kill()
@@ -166,13 +169,14 @@ def run_claude(prompt: str, interactive: bool = False) -> int:
         # Interactive mode with git watching for auto-termination
         initial_commit = get_latest_commit()
         stop_event = threading.Event()
+        killed_by_watcher = [False]  # Use list to allow mutation in thread
 
         process = subprocess.Popen(cmd)
 
         # Start watcher thread
         watcher = threading.Thread(
             target=watch_for_completion,
-            args=(process, initial_commit, stop_event)
+            args=(process, initial_commit, stop_event, killed_by_watcher)
         )
         watcher.daemon = True
         watcher.start()
@@ -185,6 +189,10 @@ def run_claude(prompt: str, interactive: bool = False) -> int:
             raise
 
         stop_event.set()
+
+        # If we killed it intentionally after a commit, that's success
+        if killed_by_watcher[0]:
+            return 0
         return process.returncode
 
 
