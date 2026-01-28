@@ -112,11 +112,13 @@ Keep breadcrumbs minimal - one sentence max. Place them in the most relevant fil
 
 1. **Implement the task fully**
 2. **Tick the task box** in PRD.md: `- [ ]` → `- [x]`
-3. **Commit with a clear message:**
+3. **Finish ALL work before committing** - logging, cleanup, everything
+4. **Commit with a clear message (THIS ENDS YOUR SESSION):**
    ```bash
    git add -A && git commit -m "Complete: [task description]"
    ```
-4. **Exit** - The orchestrator spawns the next generation
+
+**IMPORTANT:** The orchestrator watches for git commits. The moment you commit, your session will be automatically terminated. Make sure all work is complete before committing - there is no opportunity to do anything after the commit.
 
 ## Flagging Conflicts
 
