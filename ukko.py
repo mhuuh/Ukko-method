@@ -85,23 +85,29 @@ def all_tasks_complete() -> bool:
     return remaining == 0
 
 
-def get_completed_count() -> int:
-    """Count completed tasks in PRD.md"""
-    if not PRD_FILE.exists():
-        return 0
-    content = PRD_FILE.read_text(encoding="utf-8")
-    return len(re.findall(r'^- \[x\]', content, re.MULTILINE))
+def get_latest_commit() -> str:
+    """Get the latest git commit hash"""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        return result.stdout.strip()
+    except subprocess.CalledProcessError:
+        return ""
 
 
-def watch_for_completion(process, initial_count: int, stop_event: threading.Event):
-    """Watch PRD.md for task completion and terminate Claude when done."""
+def watch_for_completion(process, initial_commit: str, stop_event: threading.Event):
+    """Watch for git commits and terminate Claude when a new commit appears."""
     while not stop_event.is_set() and process.poll() is None:
-        time.sleep(2)  # Check every 2 seconds
-        current_count = get_completed_count()
-        if current_count > initial_count:
-            # A task was completed! Wait for commit to finish, then terminate
-            print(f"\n{Colors.GREEN}Task completed! Terminating session...{Colors.NC}")
-            time.sleep(3)  # Give time for git commit
+        time.sleep(3)  # Check every 3 seconds
+        current_commit = get_latest_commit()
+        if current_commit and current_commit != initial_commit:
+            # A new commit was made - task is complete!
+            print(f"\n{Colors.GREEN}New commit detected! Terminating session...{Colors.NC}")
+            time.sleep(1)  # Brief pause
             process.terminate()
             break
 
@@ -136,8 +142,8 @@ def run_claude(prompt: str, interactive: bool = False) -> int:
         process.wait()
         return process.returncode
     else:
-        # Interactive mode with file watching for auto-termination
-        initial_count = get_completed_count()
+        # Interactive mode with git watching for auto-termination
+        initial_commit = get_latest_commit()
         stop_event = threading.Event()
 
         process = subprocess.Popen(cmd)
@@ -145,7 +151,7 @@ def run_claude(prompt: str, interactive: bool = False) -> int:
         # Start watcher thread
         watcher = threading.Thread(
             target=watch_for_completion,
-            args=(process, initial_count, stop_event)
+            args=(process, initial_commit, stop_event)
         )
         watcher.daemon = True
         watcher.start()
