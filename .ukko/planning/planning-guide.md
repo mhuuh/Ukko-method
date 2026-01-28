@@ -101,8 +101,8 @@ Once the user confirms, execute these steps:
    > "Planning complete. The PRD and spec are ready.
    >
    > To start execution:
-   > - **Auto mode**: Run `./ukko.sh` - generations will run continuously
-   > - **Testing mode**: Set `mode: testing` in config.yaml, then run `./ukko.sh run` for each generation
+   > - **Auto mode**: Run `python ukko.py` - generations will run continuously
+   > - **Testing mode**: Set `mode: testing` in config.yaml, then run `python ukko.py run` for each generation
    >
    > You can stop at any time with Ctrl+C."
 

@@ -4,6 +4,6 @@
 
 ## Tasks
 
-[Tasks are added during planning phase. Each task should be atomic - completable by one Overlord generation. Order by dependencies.]
+[Tasks are added during planning phase. Each task should be atomic - completable by one Ukko generation. Order by dependencies.]
 
 - [ ] Example task format (delete this line)
