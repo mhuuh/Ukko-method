@@ -137,15 +137,15 @@ python ukko.py
 
 ### Step 6: Watch It Work
 
-Since everything runs in the Claude Code CLI, you can watch Claude work in real-time - seeing swarms launch, decisions being made, and code being written.
+Execution runs in `--print` mode so you can watch Claude's output in real-time - swarms launching, decisions being made, code being written. When a generation completes, it automatically exits and the next one starts.
 
-For a quick progress check outside of Claude:
+Press `Ctrl+C` anytime to stop the loop safely.
+
+For a quick progress check:
 
 ```bash
 python ukko.py status
 ```
-
-This shows completed tasks, current phase, and any conflicts.
 
 ---
 
