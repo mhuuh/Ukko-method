@@ -91,8 +91,8 @@ def main():
         sys.exit(1)
 
     # Read config values
-    agents_per_swarm = get_config("agents_per_swarm")
-    target_swarms = get_config("target_swarms_per_task")
+    agents_per_ensemble = get_config("agents_per_ensemble")
+    target_ensembles = get_config("target_ensembles_per_task")
     default_model = get_config("default_agent_model")
     decision_triggers = get_config_list("decision_triggers")
 
@@ -102,8 +102,8 @@ def main():
     print("Configuration detected:")
     print(f"  - Ukko model: {ukko_model or '(default)'}")
     print(f"  - Default agent model: {default_model or 'auto'}")
-    print(f"  - Agents per swarm: {agents_per_swarm or '5'}")
-    print(f"  - Target swarms per task: {target_swarms or '2-5'}")
+    print(f"  - Agents per ensemble: {agents_per_ensemble or '5'}")
+    print(f"  - Target ensembles per task: {target_ensembles or '2-5'}")
     print(f"  - Decision triggers: {len(decision_triggers)} items")
     for trigger in decision_triggers:
         print(f"      - {trigger}")
@@ -116,24 +116,24 @@ def main():
     # Read CLAUDE.md content
     content = CLAUDE_MD.read_text(encoding="utf-8")
 
-    # Replace the agents count in swarm instructions
-    if agents_per_swarm:
+    # Replace the agents count in ensemble instructions
+    if agents_per_ensemble:
         content = re.sub(
             r'launch \d+ parallel agents',
-            f'launch {agents_per_swarm} parallel agents',
+            f'launch {agents_per_ensemble} parallel agents',
             content
         )
         content = re.sub(
-            r'Swarm agent 1 of \d+',
-            f'Swarm agent 1 of {agents_per_swarm}',
+            r'Ensemble agent 1 of \d+',
+            f'Ensemble agent 1 of {agents_per_ensemble}',
             content
         )
 
-    # Replace target swarms per task
-    if target_swarms:
+    # Replace target ensembles per task
+    if target_ensembles:
         content = re.sub(
-            r'Target: \d+-\d+ swarm launches',
-            f'Target: {target_swarms} swarm launches',
+            r'Target: \d+-\d+ ensemble launches',
+            f'Target: {target_ensembles} ensemble launches',
             content
         )
 
@@ -147,14 +147,14 @@ def main():
             triggers_text += f"- {display_trigger}\n"
         triggers_text = triggers_text.rstrip('\n')
 
-        # Match the existing triggers section (from "Launch parallel agents" to the line before "**Do NOT swarm")
+        # Match the existing triggers section (from "Launch parallel agents" to the line before "**Do NOT use ensembles")
         content = re.sub(
             r'Launch parallel agents when you encounter:\n(?:- [^\n]+\n)+',
             triggers_text + '\n',
             content
         )
 
-    # Handle default agent model in swarm instructions
+    # Handle default agent model in ensemble instructions
     # Original guidance text (for restoring when set to "auto")
     original_model_guidance = """**Model selection:**
 - **haiku**: Simple decisions, clear constraints, speed matters
@@ -202,16 +202,16 @@ def main():
     print(f"{Colors.GREEN}Setup complete!{Colors.NC}")
     print()
     print("Applied to CLAUDE.md:")
-    if agents_per_swarm:
-        print(f"  {Colors.GREEN}*{Colors.NC} Agents per swarm: {agents_per_swarm}")
-    if target_swarms:
-        print(f"  {Colors.GREEN}*{Colors.NC} Target swarms per task: {target_swarms}")
+    if agents_per_ensemble:
+        print(f"  {Colors.GREEN}*{Colors.NC} Agents per ensemble: {agents_per_ensemble}")
+    if target_ensembles:
+        print(f"  {Colors.GREEN}*{Colors.NC} Target ensembles per task: {target_ensembles}")
     if decision_triggers:
         print(f"  {Colors.GREEN}*{Colors.NC} Decision triggers: {len(decision_triggers)} items")
     if default_model and default_model.lower() != "auto":
         print(f"  {Colors.GREEN}*{Colors.NC} Default agent model: {default_model}")
     else:
-        print(f"  {Colors.GREEN}*{Colors.NC} Default agent model: auto (Ukko chooses per-swarm)")
+        print(f"  {Colors.GREEN}*{Colors.NC} Default agent model: auto (Ukko chooses per-ensemble)")
 
     if ukko_model:
         print()

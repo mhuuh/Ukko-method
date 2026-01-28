@@ -37,7 +37,7 @@ Instead of humans comparing **finished implementations** (expensive, slow), we h
 │  │        ↓ yes                                              │   │
 │  │  ┌─────┴─────┐                                            │   │
 │  │  ↓     ↓     ↓                                            │   │
-│  │  [Agent][Agent][Agent]  ← Parallel swarm                  │   │
+│  │  [Agent][Agent][Agent]  ← Parallel ensemble               │   │
 │  │  └─────┬─────┘                                            │   │
 │  │        ↓                                                  │   │
 │  │  Ukko picks best approach (AI decision, not human)        │   │
@@ -249,13 +249,13 @@ Edit `.ukko/config.yaml` to customize behavior:
 mode: testing       # testing = you trigger each generation manually (recommended for beginners)
                     # auto = runs continuously until all tasks complete
 
-# Swarm settings
-swarm:
+# Ensemble settings
+ensemble:
   default_agent_model: auto    # auto | opus | sonnet | haiku
-  agents_per_swarm: 5          # Number of parallel agents per swarm
-  target_swarms_per_task: 2-5  # How often to use swarms (guidance, not strict)
+  agents_per_ensemble: 5       # Number of parallel agents per ensemble
+  target_ensembles_per_task: 2-5  # How often to use ensembles (guidance, not strict)
 
-# Swarm launch reasoning
+# Ensemble launch reasoning
 ```
 
 After editing config.yaml, run `python setup.py` to apply changes.
@@ -284,7 +284,7 @@ After editing config.yaml, run `python setup.py` to apply changes.
 
 4. **Use git** - The system commits after each task, so you can always roll back if something goes wrong
 
-5. **Check the swarm count** - If generations are slow/expensive, reduce `agents_per_swarm` in config
+5. **Check the ensemble count** - If generations are slow/expensive, reduce `agents_per_ensemble` in config
 
 ---
 

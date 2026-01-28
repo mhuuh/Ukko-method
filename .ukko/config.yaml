@@ -10,22 +10,22 @@ mode: auto
 # Model for Ukko (the decision-maker)
 ukko_model: claude-opus-4-5
 
-# Swarm configuration
-swarm:
-  # Model for swarm agents
-  # - auto: Ukko decides per-swarm based on task complexity [DEFAULT]
+# Ensemble configuration
+ensemble:
+  # Model for ensemble agents
+  # - auto: Ukko decides per-ensemble based on task complexity [DEFAULT]
   # - opus: Always use Opus (highest quality, highest cost)
   # - sonnet: Always use Sonnet (balanced)
   # - haiku: Always use Haiku (fastest, lowest cost)
   default_agent_model: auto
 
-  # Number of parallel agents per swarm [DEFAULT: 5]
-  agents_per_swarm: 5
+  # Number of parallel agents per ensemble [DEFAULT: 5]
+  agents_per_ensemble: 5
 
-  # Target swarms per task - guidance, not hard limit [DEFAULT: 2-5]
-  target_swarms_per_task: "2-5"
+  # Target ensembles per task - guidance, not hard limit [DEFAULT: 2-5]
+  target_ensembles_per_task: "2-5"
 
-# Decision triggers - when Ukko should consider launching a swarm
+# Decision triggers - when Ukko should consider launching an ensemble
 # These are templated into CLAUDE.md
 decision_triggers:
   - "choosing between architectural approaches"

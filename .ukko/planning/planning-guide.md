@@ -17,7 +17,7 @@ Explain the Ukko Method:
 >
 > 1. **Planning phase (now)**: I'll ask questions to understand what you want, then create a PRD (requirements + tasks) and technical spec.
 >
-> 2. **Execution phase**: Autonomous Ukkos complete one task at a time. They can deploy 'swarms' - parallel AI agents that propose different approaches - then the Ukko picks the best one.
+> 2. **Execution phase**: Autonomous Ukkos complete one task at a time. They can deploy 'ensembles' - parallel AI agents that propose different approaches - then the Ukko picks the best one.
 >
 > 3. **No user input needed during execution**: Once planning is complete, the system runs autonomously until all tasks are done.
 >
@@ -33,17 +33,17 @@ Ask the user about:
 
 Keep asking until you have a clear picture. It's okay to have multiple back-and-forth exchanges.
 
-## Step 2: Deploy Swarms for Key Decisions
+## Step 2: Deploy Ensembles for Key Decisions
 
-For major architectural or approach decisions, deploy a swarm:
+For major architectural or approach decisions, deploy an ensemble:
 
-**When to swarm:**
+**When to use an ensemble:**
 - Choosing the overall architecture pattern
 - Selecting key technologies or frameworks
 - Designing core data models
 - Any decision that will constrain the entire project
 
-**How to deploy a swarm:**
+**How to deploy an ensemble:**
 Use Claude Code's Task tool to launch parallel agents. Example:
 
 ```
@@ -73,7 +73,7 @@ Write to `.ukko/PRD.md`:
 ### spec.md
 
 Write to `.ukko/spec.md`:
-- Technical architecture decided via swarms
+- Technical architecture decided via ensembles
 - Key technologies and patterns
 - Data models if applicable
 - API contracts if applicable
@@ -112,6 +112,6 @@ Once the user confirms, execute these steps:
 
 - You MAY and SHOULD ask for user input during planning
 - Take your time - good planning prevents problems later
-- Use swarms for significant decisions
+- Use ensembles for significant decisions
 - The PRD and spec you create become READ-ONLY during execution
 - After cleanup, no trace of planning should remain

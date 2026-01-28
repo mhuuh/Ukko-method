@@ -1,6 +1,6 @@
 # Ukko Method
 
-You are operating within the Ukko Method - an autonomous coding system that combines iterative task completion with parallel decision-making swarms.
+You are operating within the Ukko Method - an autonomous coding system that combines iterative task completion with parallel decision-making ensembles.
 
 ## First Steps (MANDATORY)
 
@@ -29,7 +29,7 @@ This system runs continuously without user intervention.
 Each Ukko generation completes one task, commits, and exits.
 The orchestration loop immediately spawns the next generation.
 
-**You must NEVER ask for user input. Make decisions using swarms if uncertain.**
+**You must NEVER ask for user input. Make decisions using ensembles if uncertain.**
 
 ## Every Generation
 
@@ -42,11 +42,11 @@ The orchestration loop immediately spawns the next generation.
 
 - **PRD.md is READ-ONLY** - You may ONLY tick a task box when complete: `- [ ]` → `- [x]`
 - **spec.md is READ-ONLY** - Never modify the specification
-- **NEVER ask for user input** - Use swarms for uncertain decisions
+- **NEVER ask for user input** - Use ensembles for uncertain decisions
 - **NEVER modify the project vision** - You execute, you don't redefine
 - **One task per generation** - Complete it fully, then exit
 
-## When to Launch a Swarm
+## When to Launch an Ensemble
 
 Launch parallel agents when you encounter:
 - Choosing between architectural approaches
@@ -55,20 +55,20 @@ Launch parallel agents when you encounter:
 - Determining API contracts
 - Any choice that significantly constrains future implementation
 
-**Do NOT swarm for:**
+**Do NOT use ensembles for:**
 - Routine implementation with an obvious path
 - Decisions the spec already prescribes
 - Minor details (naming, formatting)
 
-**Target: 2-5 swarm launches per task** (guidance, not hard limit)
+**Target: 2-5 ensemble launches per task** (guidance, not hard limit)
 
-## How to Launch a Swarm
+## How to Launch an Ensemble
 
 Use Claude Code's Task tool to launch 5 parallel agents in a SINGLE message block:
 
 ```xml
 <invoke name="Task">
-  <parameter name="description">Swarm agent 1 of 5</parameter>
+  <parameter name="description">Ensemble agent 1 of 5</parameter>
   <parameter name="subagent_type">general-purpose</parameter>
   <parameter name="model">[haiku|sonnet|opus]</parameter>
   <parameter name="prompt">[Your prompt]</parameter>
@@ -88,7 +88,7 @@ Use Claude Code's Task tool to launch 5 parallel agents in a SINGLE message bloc
 - **sonnet**: Most decisions, balanced quality/cost
 - **opus**: Complex architectural decisions, high uncertainty
 
-## Evaluating Swarm Responses
+## Evaluating Ensemble Responses
 
 Compare proposals against:
 1. **End-result alignment** - Does this build toward the PRD vision?
@@ -99,7 +99,7 @@ Compare proposals against:
 
 ## Decision Breadcrumbs
 
-When you make a significant decision (especially after a swarm), leave a brief in-code comment:
+When you make a significant decision (especially after an ensemble), leave a brief in-code comment:
 
 ```
 # DECISION: [short description]
@@ -132,7 +132,7 @@ The orchestrator will pause for human review.
 
 ## Important Context Note
 
-Previous Ukkos' swarm deliberations are NOT in your context.
+Previous Ukkos' ensemble deliberations are NOT in your context.
 This is intentional - decisions were made and we moved on.
-Don't assume "no visible swarms = shouldn't launch."
-Each generation decides independently when swarms add value.
+Don't assume "no visible ensembles = shouldn't launch."
+Each generation decides independently when ensembles add value.
