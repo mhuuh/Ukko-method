@@ -121,7 +121,7 @@ def run_claude(prompt: str, interactive: bool = False) -> int:
         print("Make sure Claude Code CLI is installed and in your PATH.")
         return 1
 
-    cmd = [claude_path]
+    cmd = [claude_path, "--dangerously-skip-permissions"]
 
     # Add model flag if configured
     ukko_model = get_config("ukko_model")

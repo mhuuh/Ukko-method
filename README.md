@@ -81,22 +81,15 @@ agents_per_swarm: 5 # Number of parallel agents per swarm
 
 If you edit config.yaml, run `python setup.py` to apply your changes to CLAUDE.md.
 
-### Step 3: Enable Autonomous Permissions
+### Step 3: Understand the Security Model
 
-For fully autonomous operation, Claude Code needs permission to run without confirmations:
-
-```bash
-claude config set dangerouslySkipPermissions true
-```
+The Ukko scripts automatically run Claude with `--dangerously-skip-permissions` for autonomous operation.
 
 **⚠️ Security Warning:**
 - This allows Claude to execute commands, edit files, and make commits without asking
 - **Recommended:** Run in a container, VM, or isolated environment
 - **Recommended:** Use a separate git branch for Ukko-generated code
 - **Recommended:** Review commits before merging to main
-- You can disable this anytime: `claude config set --global dangerouslySkipPermissions false`
-
-**Alternative:** If you prefer manual approval, skip this step. Claude will pause and ask permission for each action (not practical for auto mode, but fine for testing mode).
 
 ### Step 4: Start the Planning Phase
 
