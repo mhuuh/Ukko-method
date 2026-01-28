@@ -113,12 +113,22 @@ def run_claude(prompt: str, interactive: bool = False) -> int:
 
     cmd.append(prompt)
 
-    result = subprocess.run(cmd, check=False)
+    # Ensure output streams to terminal in real-time
+    result = subprocess.run(
+        cmd,
+        check=False,
+        stdout=sys.stdout,
+        stderr=sys.stderr
+    )
     return result.returncode
 
 
-def run_generation():
-    """Run a single Ukko generation"""
+def run_generation() -> bool:
+    """Run a single Ukko generation.
+
+    Returns:
+        True if generation completed successfully, False on error.
+    """
     print(f"{Colors.BLUE}Starting Ukko generation...{Colors.NC}")
 
     # Check for conflicts first
@@ -129,12 +139,19 @@ def run_generation():
         print(CONFLICT_FILE.read_text(encoding="utf-8"))
         print("---")
         print(f"Resolve the conflict and delete {CONFLICT_FILE} to continue.")
-        sys.exit(1)
+        return False
 
     # Run Claude Code
-    run_claude("You are Ukko. Read CLAUDE.md and proceed with your phase.")
+    exit_code = run_claude("You are Ukko. Read CLAUDE.md and proceed with your phase.")
+
+    if exit_code != 0:
+        print(f"{Colors.RED}Generation failed (exit code {exit_code}).{Colors.NC}")
+        print("This may be due to API limits, network issues, or an error.")
+        print("Check the output above for details.")
+        return False
 
     print(f"{Colors.GREEN}Generation complete.{Colors.NC}")
+    return True
 
 
 def show_status():
@@ -181,7 +198,8 @@ def main():
         if is_planning_phase():
             print(f"{Colors.YELLOW}Still in planning phase. Run 'python ukko.py plan' first.{Colors.NC}")
             sys.exit(1)
-        run_generation()
+        success = run_generation()
+        sys.exit(0 if success else 1)
 
     elif command == "status":
         show_status()
@@ -214,7 +232,11 @@ def main():
                         break
 
                     print(f"Progress: {get_progress()}")
-                    run_generation()
+                    success = run_generation()
+
+                    if not success:
+                        print(f"{Colors.YELLOW}Stopping due to error. Fix the issue and run again.{Colors.NC}")
+                        break
 
                     # Brief pause between generations
                     time.sleep(2)
