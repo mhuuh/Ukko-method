@@ -84,8 +84,14 @@ def all_tasks_complete() -> bool:
     return remaining == 0
 
 
-def run_claude(prompt: str) -> int:
-    """Run Claude Code with the given prompt"""
+def run_claude(prompt: str, interactive: bool = False) -> int:
+    """Run Claude Code with the given prompt
+
+    Args:
+        prompt: The prompt to send to Claude
+        interactive: If True, run in interactive mode (for planning).
+                     If False, run with --print for autonomous operation.
+    """
     # Find claude executable (handles .cmd on Windows)
     claude_path = shutil.which("claude")
     if not claude_path:
@@ -93,7 +99,10 @@ def run_claude(prompt: str) -> int:
         print("Make sure Claude Code CLI is installed and in your PATH.")
         return 1
 
-    cmd = [claude_path, "--print"]
+    cmd = [claude_path]
+
+    if not interactive:
+        cmd.append("--print")
 
     # Add model flag if configured
     ukko_model = get_config("ukko_model")
@@ -164,7 +173,7 @@ def main():
             print(f"{Colors.YELLOW}Planning already complete. Nothing to do.{Colors.NC}")
             sys.exit(0)
         print(f"{Colors.BLUE}Starting planning phase...{Colors.NC}")
-        run_claude("You are the Planning Ukko. Read CLAUDE.md and begin planning.")
+        run_claude("You are the Planning Ukko. Read CLAUDE.md and begin planning.", interactive=True)
 
     elif command == "run":
         if is_planning_phase():
