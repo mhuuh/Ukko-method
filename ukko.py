@@ -9,11 +9,9 @@ Usage:
     python ukko.py status   - Show current progress
 """
 
-import json
 import os
 import re
 import shutil
-import subprocess
 import sys
 import time
 from pathlib import Path
@@ -107,83 +105,16 @@ def run_claude(prompt: str, interactive: bool = False) -> int:
     if ukko_model:
         cmd.extend(["--model", ukko_model])
 
-    if interactive:
-        # Interactive mode for planning - user can chat
-        cmd.append(prompt)
-        result = subprocess.run(cmd, check=False)
-        return result.returncode
-    else:
-        # Non-interactive mode with real-time streaming output
-        cmd.extend([
-            "--print",
-            "--verbose",
-            "--output-format", "stream-json",
-            prompt
-        ])
+    # Build the command
+    if not interactive:
+        cmd.append("--print")
 
-        # Stream output in real-time using unbuffered reading
-        process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,  # Merge stderr into stdout
-            bufsize=0  # Unbuffered
-        )
+    cmd.append(prompt)
 
-        current_tool = None
-        try:
-            # Read byte by byte to avoid any buffering issues
-            buffer = b""
-            while True:
-                chunk = process.stdout.read(1)
-                if not chunk:
-                    break
-
-                buffer += chunk
-
-                # Process complete lines
-                if chunk == b"\n":
-                    line = buffer.decode("utf-8", errors="replace").strip()
-                    buffer = b""
-
-                    if not line:
-                        continue
-
-                    try:
-                        data = json.loads(line)
-
-                        # Extract text from streaming events
-                        event = data.get("event", {})
-                        delta = event.get("delta", {})
-
-                        if delta.get("type") == "text_delta":
-                            text = delta.get("text", "")
-                            sys.stdout.write(text)
-                            sys.stdout.flush()
-
-                        # Track tool calls
-                        elif event.get("type") == "content_block_start":
-                            content = event.get("content_block", {})
-                            if content.get("type") == "tool_use":
-                                tool_name = content.get("name", "unknown")
-                                if current_tool != tool_name:
-                                    print(f"\n{Colors.BLUE}[Tool: {tool_name}]{Colors.NC}")
-                                    current_tool = tool_name
-
-                        elif event.get("type") == "content_block_stop":
-                            current_tool = None
-
-                    except json.JSONDecodeError:
-                        # Not JSON, print as-is (might be error messages)
-                        print(line)
-                        sys.stdout.flush()
-
-        except KeyboardInterrupt:
-            process.terminate()
-            raise
-
-        process.wait()
-        print()  # Newline after streaming output
-        return process.returncode
+    # Use os.system for direct shell execution with full terminal I/O
+    # This is simpler and avoids all Python subprocess buffering issues
+    cmd_str = " ".join(f'"{c}"' if " " in c else c for c in cmd)
+    return os.system(cmd_str)
 
 
 def run_generation() -> bool:
