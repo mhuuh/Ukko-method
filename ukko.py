@@ -121,53 +121,61 @@ def run_claude(prompt: str, interactive: bool = False) -> int:
             prompt
         ])
 
-        # Stream and parse JSON output in real-time
+        # Stream output in real-time using unbuffered reading
         process = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            bufsize=1
+            stderr=subprocess.STDOUT,  # Merge stderr into stdout
+            bufsize=0  # Unbuffered
         )
 
         current_tool = None
         try:
-            for line in process.stdout:
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    data = json.loads(line)
+            # Read byte by byte to avoid any buffering issues
+            buffer = b""
+            while True:
+                chunk = process.stdout.read(1)
+                if not chunk:
+                    break
 
-                    # Extract text from streaming events
-                    event = data.get("event", {})
-                    delta = event.get("delta", {})
+                buffer += chunk
 
-                    if delta.get("type") == "text_delta":
-                        text = delta.get("text", "")
-                        sys.stdout.write(text)
+                # Process complete lines
+                if chunk == b"\n":
+                    line = buffer.decode("utf-8", errors="replace").strip()
+                    buffer = b""
+
+                    if not line:
+                        continue
+
+                    try:
+                        data = json.loads(line)
+
+                        # Extract text from streaming events
+                        event = data.get("event", {})
+                        delta = event.get("delta", {})
+
+                        if delta.get("type") == "text_delta":
+                            text = delta.get("text", "")
+                            sys.stdout.write(text)
+                            sys.stdout.flush()
+
+                        # Track tool calls
+                        elif event.get("type") == "content_block_start":
+                            content = event.get("content_block", {})
+                            if content.get("type") == "tool_use":
+                                tool_name = content.get("name", "unknown")
+                                if current_tool != tool_name:
+                                    print(f"\n{Colors.BLUE}[Tool: {tool_name}]{Colors.NC}")
+                                    current_tool = tool_name
+
+                        elif event.get("type") == "content_block_stop":
+                            current_tool = None
+
+                    except json.JSONDecodeError:
+                        # Not JSON, print as-is (might be error messages)
+                        print(line)
                         sys.stdout.flush()
-
-                    # Track tool calls
-                    elif event.get("type") == "content_block_start":
-                        content = event.get("content_block", {})
-                        if content.get("type") == "tool_use":
-                            tool_name = content.get("name", "unknown")
-                            if current_tool != tool_name:
-                                print(f"\n{Colors.BLUE}[Tool: {tool_name}]{Colors.NC}")
-                                current_tool = tool_name
-
-                    elif event.get("type") == "content_block_stop":
-                        current_tool = None
-
-                except json.JSONDecodeError:
-                    # Not JSON, might be raw output - print as-is
-                    print(line)
-
-            # Also capture any stderr
-            stderr_output = process.stderr.read()
-            if stderr_output:
-                print(stderr_output, file=sys.stderr)
 
         except KeyboardInterrupt:
             process.terminate()
