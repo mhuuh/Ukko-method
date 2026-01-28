@@ -9,6 +9,7 @@ Usage:
     python ukko.py status   - Show current progress
 """
 
+import json
 import os
 import re
 import shutil
@@ -90,7 +91,7 @@ def run_claude(prompt: str, interactive: bool = False) -> int:
     Args:
         prompt: The prompt to send to Claude
         interactive: If True, run interactive session (for planning).
-                     If False, use --print mode (for execution loop).
+                     If False, use --print with stream-json for real-time output.
     """
     # Find claude executable (handles .cmd on Windows)
     claude_path = shutil.which("claude")
@@ -101,26 +102,79 @@ def run_claude(prompt: str, interactive: bool = False) -> int:
 
     cmd = [claude_path]
 
-    # --print mode: Claude outputs to terminal and exits when done
-    # This allows the orchestrator loop to continue to next generation
-    if not interactive:
-        cmd.append("--print")
-
     # Add model flag if configured
     ukko_model = get_config("ukko_model")
     if ukko_model:
         cmd.extend(["--model", ukko_model])
 
-    cmd.append(prompt)
+    if interactive:
+        # Interactive mode for planning - user can chat
+        cmd.append(prompt)
+        result = subprocess.run(cmd, check=False)
+        return result.returncode
+    else:
+        # Non-interactive mode with real-time streaming output
+        cmd.extend([
+            "--print",
+            "--output-format", "stream-json",
+            prompt
+        ])
 
-    # Ensure output streams to terminal in real-time
-    result = subprocess.run(
-        cmd,
-        check=False,
-        stdout=sys.stdout,
-        stderr=sys.stderr
-    )
-    return result.returncode
+        # Stream and parse JSON output in real-time
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1
+        )
+
+        current_tool = None
+        try:
+            for line in process.stdout:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    data = json.loads(line)
+
+                    # Extract text from streaming events
+                    event = data.get("event", {})
+                    delta = event.get("delta", {})
+
+                    if delta.get("type") == "text_delta":
+                        text = delta.get("text", "")
+                        sys.stdout.write(text)
+                        sys.stdout.flush()
+
+                    # Track tool calls
+                    elif event.get("type") == "content_block_start":
+                        content = event.get("content_block", {})
+                        if content.get("type") == "tool_use":
+                            tool_name = content.get("name", "unknown")
+                            if current_tool != tool_name:
+                                print(f"\n{Colors.BLUE}[Tool: {tool_name}]{Colors.NC}")
+                                current_tool = tool_name
+
+                    elif event.get("type") == "content_block_stop":
+                        current_tool = None
+
+                except json.JSONDecodeError:
+                    # Not JSON, might be raw output - print as-is
+                    print(line)
+
+            # Also capture any stderr
+            stderr_output = process.stderr.read()
+            if stderr_output:
+                print(stderr_output, file=sys.stderr)
+
+        except KeyboardInterrupt:
+            process.terminate()
+            raise
+
+        process.wait()
+        print()  # Newline after streaming output
+        return process.returncode
 
 
 def run_generation() -> bool:
