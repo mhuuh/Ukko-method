@@ -116,6 +116,7 @@ def run_claude(prompt: str, interactive: bool = False) -> int:
         # Non-interactive mode with real-time streaming output
         cmd.extend([
             "--print",
+            "--verbose",
             "--output-format", "stream-json",
             prompt
         ])
