@@ -101,15 +101,33 @@ def get_latest_commit() -> str:
 
 def watch_for_completion(process, initial_commit: str, stop_event: threading.Event):
     """Watch for git commits and terminate Claude when a new commit appears."""
+    print(f"{Colors.YELLOW}[Watcher] Started. Initial commit: {initial_commit[:8] if initial_commit else 'none'}{Colors.NC}")
+
     while not stop_event.is_set() and process.poll() is None:
         time.sleep(3)  # Check every 3 seconds
         current_commit = get_latest_commit()
+
         if current_commit and current_commit != initial_commit:
             # A new commit was made - task is complete!
-            print(f"\n{Colors.GREEN}New commit detected! Terminating session...{Colors.NC}")
-            time.sleep(1)  # Brief pause
-            process.terminate()
+            print(f"\n{Colors.GREEN}[Watcher] New commit detected: {current_commit[:8]}{Colors.NC}")
+            print(f"{Colors.GREEN}[Watcher] Killing Claude process...{Colors.NC}")
+
+            # Force kill the process
+            process.kill()
+
+            # On Windows, also try taskkill to ensure child processes die
+            if sys.platform == "win32":
+                try:
+                    subprocess.run(
+                        ["taskkill", "/F", "/T", "/PID", str(process.pid)],
+                        capture_output=True
+                    )
+                except Exception:
+                    pass
+
             break
+
+    print(f"{Colors.YELLOW}[Watcher] Stopped.{Colors.NC}")
 
 
 def run_claude(prompt: str, interactive: bool = False) -> int:
