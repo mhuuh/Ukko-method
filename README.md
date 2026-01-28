@@ -4,6 +4,8 @@ An autonomous coding system that combines iterative task completion with paralle
 
 Named after **Ukko** (Finnish: *Ukko ylijumala*), the supreme god of sky, weather, and thunder in Finnish mythology. Just as Ukko ruled over the other gods from above, the Ukko Method places an AI "overseer" in charge of orchestrating agents to research best ways forward.
 
+<img width="2041" height="1231" alt="Screenshot 2026-01-28 220630" src="https://github.com/user-attachments/assets/20479fdc-1ae5-4c9b-8d46-b75ce44b47e5" />
+
 ---
 
 ## How It Works
