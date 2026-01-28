@@ -109,8 +109,11 @@ def watch_for_completion(process, initial_commit: str, stop_event: threading.Eve
 
         if current_commit and current_commit != initial_commit:
             # A new commit was made - task is complete!
-            print(f"\n{Colors.GREEN}[Watcher] New commit detected: {current_commit[:8]}{Colors.NC}")
-            print(f"{Colors.GREEN}[Watcher] Killing Claude process...{Colors.NC}")
+            # Wait for Claude to finish its output summary
+            print(f"\n{Colors.GREEN}[Watcher] Commit detected: {current_commit[:8]} - waiting for output to finish...{Colors.NC}")
+            time.sleep(8)  # Give Claude time to finish output
+
+            print(f"{Colors.GREEN}[Watcher] Terminating session...{Colors.NC}")
 
             # Force kill the process
             process.kill()
@@ -284,6 +287,7 @@ def main():
             print()
 
             try:
+                generation = 1
                 while True:
                     if all_tasks_complete():
                         print(f"{Colors.GREEN}All tasks complete! Exiting.{Colors.NC}")
@@ -293,13 +297,23 @@ def main():
                         print(f"{Colors.RED}Conflict detected. Pausing for human review.{Colors.NC}")
                         break
 
+                    # Clear screen between generations for clean start
+                    if sys.platform == "win32":
+                        os.system("cls")
+                    else:
+                        os.system("clear")
+
+                    print(f"{Colors.BLUE}=== Generation {generation} ==={Colors.NC}")
                     print(f"Progress: {get_progress()}")
+                    print()
+
                     success = run_generation()
 
                     if not success:
                         print(f"{Colors.YELLOW}Stopping due to error. Fix the issue and run again.{Colors.NC}")
                         break
 
+                    generation += 1
                     # Brief pause between generations
                     time.sleep(2)
             except KeyboardInterrupt:
