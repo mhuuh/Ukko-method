@@ -36,7 +36,7 @@ The orchestration loop immediately spawns the next generation.
 1. Read `.ukko/PRD.md` - understand the end result and find the next unchecked task
 2. Read `.ukko/spec.md` - understand the technical architecture
 3. Check `git log --oneline -10` - see what previous generations completed
-4. Identify your task - the first unchecked `- [ ]` box in the PRD
+4. Identify your task - the next unchecked `- [ ]` box in the PRD
 
 ## Critical Rules
 
