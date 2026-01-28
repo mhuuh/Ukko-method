@@ -12,7 +12,9 @@ Usage:
 import os
 import re
 import shutil
+import subprocess
 import sys
+import threading
 import time
 from pathlib import Path
 
@@ -83,15 +85,36 @@ def all_tasks_complete() -> bool:
     return remaining == 0
 
 
+def get_completed_count() -> int:
+    """Count completed tasks in PRD.md"""
+    if not PRD_FILE.exists():
+        return 0
+    content = PRD_FILE.read_text(encoding="utf-8")
+    return len(re.findall(r'^- \[x\]', content, re.MULTILINE))
+
+
+def watch_for_completion(process, initial_count: int, stop_event: threading.Event):
+    """Watch PRD.md for task completion and terminate Claude when done."""
+    while not stop_event.is_set() and process.poll() is None:
+        time.sleep(2)  # Check every 2 seconds
+        current_count = get_completed_count()
+        if current_count > initial_count:
+            # A task was completed! Wait for commit to finish, then terminate
+            print(f"\n{Colors.GREEN}Task completed! Terminating session...{Colors.NC}")
+            time.sleep(3)  # Give time for git commit
+            process.terminate()
+            break
+
+
 def run_claude(prompt: str, interactive: bool = False) -> int:
     """Run Claude Code with the given prompt.
 
     Args:
         prompt: The prompt to send to Claude
         interactive: If True, run interactive session (for planning).
-                     If False, use --print with stream-json for real-time output.
+                     If False, run interactive but watch for task completion.
     """
-    # Find claude executable (handles .cmd on Windows)
+    # Find claude executable
     claude_path = shutil.which("claude")
     if not claude_path:
         print(f"{Colors.RED}Error: 'claude' command not found.{Colors.NC}")
@@ -105,16 +128,37 @@ def run_claude(prompt: str, interactive: bool = False) -> int:
     if ukko_model:
         cmd.extend(["--model", ukko_model])
 
-    # Build the command
-    if not interactive:
-        cmd.append("--print")
-
     cmd.append(prompt)
 
-    # Use os.system for direct shell execution with full terminal I/O
-    # This is simpler and avoids all Python subprocess buffering issues
-    cmd_str = " ".join(f'"{c}"' if " " in c else c for c in cmd)
-    return os.system(cmd_str)
+    if interactive:
+        # Pure interactive mode for planning - no watching
+        process = subprocess.Popen(cmd)
+        process.wait()
+        return process.returncode
+    else:
+        # Interactive mode with file watching for auto-termination
+        initial_count = get_completed_count()
+        stop_event = threading.Event()
+
+        process = subprocess.Popen(cmd)
+
+        # Start watcher thread
+        watcher = threading.Thread(
+            target=watch_for_completion,
+            args=(process, initial_count, stop_event)
+        )
+        watcher.daemon = True
+        watcher.start()
+
+        try:
+            process.wait()
+        except KeyboardInterrupt:
+            stop_event.set()
+            process.terminate()
+            raise
+
+        stop_event.set()
+        return process.returncode
 
 
 def run_generation() -> bool:
