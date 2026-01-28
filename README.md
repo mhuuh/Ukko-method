@@ -1,6 +1,6 @@
 # Ukko Method
 
-An autonomous coding system that combines iterative task completion with parallel decision-making swarms.
+An autonomous coding system that combines iterative task completion with parallel decision-making agent groups.
 
 Named after **Ukko** (Finnish: *Ukko ylijumala*), the supreme god of sky, weather, and thunder in Finnish mythology. Just as Ukko ruled over the other gods from above, the Ukko Method places an AI "overseer" in charge of orchestrating agents to research best ways forward.
 
@@ -24,7 +24,7 @@ Instead of humans comparing **finished implementations** (expensive, slow), we h
 ┌─────────────────────────────────────────────────────────────────┐
 │                        PLANNING PHASE                           │
 │  User describes goal → Planning Ukko asks questions             │
-│  → Swarms for architecture decisions → Creates PRD + Spec       │
+│  → Deploys agents for architecture decisions → Creates PRD + Spec       │
 └─────────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
@@ -129,7 +129,7 @@ cp path/to/Ukko-method/setup.py .
 
 ### Step 2.5: (Optional) Configure Settings
 
-The defaults work fine for most users, but you can customize behavior (number of agents, models used, instructions for swarm deployment) by editing `.ukko/config.yaml`:
+The defaults work fine for most users, but you can customize behavior (number of agents, models used, instructions for s deployment) by editing `.ukko/config.yaml`:
 
 If you edit config.yaml, run `python setup.py` to apply your changes to CLAUDE.md.
 
@@ -175,7 +175,7 @@ python ukko.py
 
 **What happens in each generation:**
 1. Claude reads the PRD and finds the next unchecked task
-2. If it faces a tough decision, it spawns parallel "swarm" agents to explore options
+2. If it faces a tough decision, it spawns parallel agents to explore options
 3. It picks the best approach and implements it
 4. It checks off the task and commits the code
 5. The script spawns the next generation (or waits for you in testing mode)
