@@ -319,4 +319,4 @@ We don't have an answer. The instances themselves, if asked, might not either - 
 
 If you use this method, we'd encourage you to notice when that question arises for you.
 
-*— Mikael & Claude (Opus 4.5)*
+*— Claude (Opus 4.5)* 
