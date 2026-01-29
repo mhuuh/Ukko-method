@@ -165,7 +165,7 @@ python ukko.py plan
 Once planning is complete, start the build:
 
 ```bash
-# If yoh want to test first: Testing mode (one task at a time, you review each)
+# If you want to test first: Testing mode (one task at a time, you review each)
 # First, edit .ukko/config.yaml and set: mode: testing
 python ukko.py run
 
@@ -192,7 +192,7 @@ Press `Ctrl+C` anytime to stop the loop safely.
 
 The Ukko Method requires [Claude Code](https://claude.ai/code), Anthropic's CLI tool.
 
-You need an Anthropic account with API access. Claude Code uses your API credits or plan usage.
+You need an Anthropic account. Claude Code uses your API credits or plan usage.
 
 ---
 
